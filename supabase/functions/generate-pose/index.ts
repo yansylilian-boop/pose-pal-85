@@ -12,7 +12,7 @@ serve(async (req) => {
   }
 
   try {
-    const { peopleCount, maleCount, femaleCount, stylePrompt } = await req.json();
+    const { peopleCount, maleCount, femaleCount, coupleCount = 0, stylePrompt } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
 
@@ -22,9 +22,18 @@ serve(async (req) => {
 
     const styleDesc = stylePrompt ? `The mood/style should be: ${stylePrompt}.` : "";
     const hasMixedGender = maleCount > 0 && femaleCount > 0;
-    const boundaryRule = hasMixedGender
-      ? `IMPORTANT: Since there are both males and females, keep all poses friendly and casual. NO intimate, romantic, or physically close contact between different genders (no hugging, leaning on each other, holding hands, piggyback rides, or lifting). Keep a comfortable distance between males and females. Also avoid any difficult or acrobatic poses.`
-      : "";
+
+    let boundaryRule = "";
+    if (hasMixedGender) {
+      if (coupleCount > 0) {
+        const nonCoupleNote = coupleCount < Math.min(maleCount, femaleCount)
+          ? `The remaining non-couple males and females should keep a comfortable distance — NO intimate, romantic, or physically close contact between them. Keep their poses friendly and casual.`
+          : "";
+        boundaryRule = `IMPORTANT: There are ${coupleCount} couple(s) among these people. The couples CAN have intimate, romantic, sweet poses (hugging, leaning on each other, holding hands, etc.). ${nonCoupleNote} Also avoid any difficult or acrobatic poses.`;
+      } else {
+        boundaryRule = `IMPORTANT: Since there are both males and females but NO couples, keep all poses friendly and casual. NO intimate, romantic, or physically close contact between different genders (no hugging, leaning on each other, holding hands, piggyback rides, or lifting). Keep a comfortable distance between males and females. Also avoid any difficult or acrobatic poses.`;
+      }
+    }
 
     const prompt = `Generate a cute comic/manga style illustration showing a group photo pose for ${peopleCount} people (${genderDesc.join(" and ")}). 
 Show them in a fun, creative group pose suitable for taking a photo together. 
