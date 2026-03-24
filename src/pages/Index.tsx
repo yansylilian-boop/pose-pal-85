@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import PeopleSelector from "@/components/PeopleSelector";
 import GenderSelector from "@/components/GenderSelector";
-import StyleSelector, { POSE_STYLES } from "@/components/StyleSelector";
+import StyleInput from "@/components/StyleInput";
 import PoseResult from "@/components/PoseResult";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -10,7 +10,7 @@ import { toast } from "sonner";
 const Index = () => {
   const [peopleCount, setPeopleCount] = useState(2);
   const [maleCount, setMaleCount] = useState(1);
-  const [styleId, setStyleId] = useState("funny");
+  const [styleText, setStyleText] = useState("");
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [description, setDescription] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -28,9 +28,8 @@ const Index = () => {
 
     try {
       const femaleCount = peopleCount - maleCount;
-      const style = POSE_STYLES.find((s) => s.id === styleId);
       const { data, error } = await supabase.functions.invoke("generate-pose", {
-        body: { peopleCount, maleCount, femaleCount, stylePrompt: style?.prompt || "" },
+        body: { peopleCount, maleCount, femaleCount, stylePrompt: styleText },
       });
 
       if (error) throw error;
@@ -71,7 +70,7 @@ const Index = () => {
             maleCount={maleCount}
             onChange={setMaleCount}
           />
-          <StyleSelector selected={styleId} onChange={setStyleId} />
+          <StyleInput value={styleText} onChange={setStyleText} />
           <Button
             onClick={generatePose}
             disabled={isLoading}
