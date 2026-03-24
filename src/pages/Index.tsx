@@ -11,6 +11,7 @@ import { toast } from "sonner";
 const Index = () => {
   const [peopleCount, setPeopleCount] = useState(2);
   const [maleCount, setMaleCount] = useState(1);
+  const [coupleCount, setCoupleCount] = useState(0);
   const [styleText, setStyleText] = useState("");
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [description, setDescription] = useState("");
