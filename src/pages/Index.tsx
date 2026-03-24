@@ -14,6 +14,7 @@ const Index = () => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [description, setDescription] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [hasGenerated, setHasGenerated] = useState(false);
 
   const handlePeopleChange = (count: number) => {
     setPeopleCount(count);
