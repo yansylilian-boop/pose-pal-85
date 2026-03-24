@@ -38,6 +38,7 @@ const Index = () => {
       if (data?.imageUrl) {
         setImageUrl(data.imageUrl);
         setDescription(data.description || "");
+        setHasGenerated(true);
       } else {
         throw new Error("未获取到图片");
       }
