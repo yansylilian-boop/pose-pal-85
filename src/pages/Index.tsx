@@ -77,7 +77,7 @@ const Index = () => {
             disabled={isLoading}
             className="w-full h-14 text-lg font-display font-bold rounded-2xl bg-primary text-primary-foreground hover:bg-primary/90 shadow-[var(--shadow-button)] transition-all hover:scale-[1.02] active:scale-[0.98]"
           >
-            {isLoading ? "生成中..." : "✨ 生成姿势"}
+            {isLoading ? "生成中..." : hasGenerated ? "🔄 换一个动作" : "✨ 生成姿势"}
           </Button>
         </div>
 
