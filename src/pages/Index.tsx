@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import PeopleSelector from "@/components/PeopleSelector";
 import GenderSelector from "@/components/GenderSelector";
-import StyleSelector, { POSE_STYLES } from "@/components/StyleSelector";
+import StyleInput from "@/components/StyleInput";
 import PoseResult from "@/components/PoseResult";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
