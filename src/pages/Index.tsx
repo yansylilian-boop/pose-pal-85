@@ -69,6 +69,7 @@ const Index = () => {
             maleCount={maleCount}
             onChange={setMaleCount}
           />
+          <StyleSelector selected={styleId} onChange={setStyleId} />
           <Button
             onClick={generatePose}
             disabled={isLoading}
