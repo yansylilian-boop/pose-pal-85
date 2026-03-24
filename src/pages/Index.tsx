@@ -54,7 +54,7 @@ const Index = () => {
         {/* Header */}
         <div className="text-center space-y-2">
           <h1 className="text-3xl font-display font-bold text-foreground">
-            📸 拍照姿势生成器
+            📸「漫拍」Foto
           </h1>
           <p className="text-muted-foreground font-body">
             选择人数和性别，AI 帮你设计漫画风格姿势
