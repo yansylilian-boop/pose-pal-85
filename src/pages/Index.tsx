@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import PeopleSelector from "@/components/PeopleSelector";
 import GenderSelector from "@/components/GenderSelector";
+import CoupleSelector from "@/components/CoupleSelector";
 import StyleInput from "@/components/StyleInput";
 import PoseResult from "@/components/PoseResult";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,15 +11,26 @@ import { toast } from "sonner";
 const Index = () => {
   const [peopleCount, setPeopleCount] = useState(2);
   const [maleCount, setMaleCount] = useState(1);
+  const [coupleCount, setCoupleCount] = useState(0);
   const [styleText, setStyleText] = useState("");
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [description, setDescription] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [hasGenerated, setHasGenerated] = useState(false);
 
+  const femaleCount = peopleCount - maleCount;
+  const hasMixedGender = maleCount > 0 && femaleCount > 0;
+
   const handlePeopleChange = (count: number) => {
     setPeopleCount(count);
-    setMaleCount(Math.min(maleCount, count));
+    const newMale = Math.min(maleCount, count);
+    setMaleCount(newMale);
+    setCoupleCount(Math.min(coupleCount, Math.min(newMale, count - newMale)));
+  };
+
+  const handleMaleChange = (val: number) => {
+    setMaleCount(val);
+    setCoupleCount(Math.min(coupleCount, Math.min(val, peopleCount - val)));
   };
 
   const generatePose = async () => {
@@ -29,9 +41,9 @@ const Index = () => {
     const maxRetries = 2;
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
       try {
-        const femaleCount = peopleCount - maleCount;
+        const fc = peopleCount - maleCount;
         const { data, error } = await supabase.functions.invoke("generate-pose", {
-          body: { peopleCount, maleCount, femaleCount, stylePrompt: styleText },
+          body: { peopleCount, maleCount, femaleCount: fc, coupleCount, stylePrompt: styleText },
         });
 
         if (error) {
@@ -107,8 +119,16 @@ const Index = () => {
           <GenderSelector
             total={peopleCount}
             maleCount={maleCount}
-            onChange={setMaleCount}
+            onChange={handleMaleChange}
           />
+          {hasMixedGender && (
+            <CoupleSelector
+              maleCount={maleCount}
+              femaleCount={femaleCount}
+              coupleCount={coupleCount}
+              onChange={setCoupleCount}
+            />
+          )}
           <StyleInput value={styleText} onChange={setStyleText} />
           <Button
             onClick={generatePose}
