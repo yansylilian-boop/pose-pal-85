@@ -12,7 +12,7 @@ serve(async (req) => {
   }
 
   try {
-    const { peopleCount, maleCount, femaleCount } = await req.json();
+    const { peopleCount, maleCount, femaleCount, stylePrompt } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
 
@@ -20,8 +20,11 @@ serve(async (req) => {
     if (maleCount > 0) genderDesc.push(`${maleCount} male(s)`);
     if (femaleCount > 0) genderDesc.push(`${femaleCount} female(s)`);
 
+    const styleDesc = stylePrompt ? `The mood/style should be: ${stylePrompt}.` : "";
+
     const prompt = `Generate a cute comic/manga style illustration showing a group photo pose for ${peopleCount} people (${genderDesc.join(" and ")}). 
 Show them in a fun, creative group pose suitable for taking a photo together. 
+${styleDesc}
 The style should be clean line art with soft pastel colors, like a Japanese manga or webtoon illustration.
 Show full body poses with clear positioning. 
 Make each person distinct with different hairstyles and outfits.
