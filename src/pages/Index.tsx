@@ -14,6 +14,7 @@ const Index = () => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [description, setDescription] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [hasGenerated, setHasGenerated] = useState(false);
 
   const handlePeopleChange = (count: number) => {
     setPeopleCount(count);
@@ -37,6 +38,7 @@ const Index = () => {
       if (data?.imageUrl) {
         setImageUrl(data.imageUrl);
         setDescription(data.description || "");
+        setHasGenerated(true);
       } else {
         throw new Error("未获取到图片");
       }
@@ -54,7 +56,7 @@ const Index = () => {
         {/* Header */}
         <div className="text-center space-y-2">
           <h1 className="text-3xl font-display font-bold text-foreground">
-            📸 拍照姿势生成器
+            📸「漫拍」Foto
           </h1>
           <p className="text-muted-foreground font-body">
             选择人数和性别，AI 帮你设计漫画风格姿势
@@ -75,7 +77,7 @@ const Index = () => {
             disabled={isLoading}
             className="w-full h-14 text-lg font-display font-bold rounded-2xl bg-primary text-primary-foreground hover:bg-primary/90 shadow-[var(--shadow-button)] transition-all hover:scale-[1.02] active:scale-[0.98]"
           >
-            {isLoading ? "生成中..." : "✨ 生成姿势"}
+            {isLoading ? "生成中..." : hasGenerated ? "🔄 换一个动作" : "✨ 生成姿势"}
           </Button>
         </div>
 
