@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import PeopleSelector from "@/components/PeopleSelector";
 import GenderSelector from "@/components/GenderSelector";
+import StyleSelector, { POSE_STYLES } from "@/components/StyleSelector";
 import PoseResult from "@/components/PoseResult";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -9,6 +10,7 @@ import { toast } from "sonner";
 const Index = () => {
   const [peopleCount, setPeopleCount] = useState(2);
   const [maleCount, setMaleCount] = useState(1);
+  const [styleId, setStyleId] = useState("funny");
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [description, setDescription] = useState("");
   const [isLoading, setIsLoading] = useState(false);
