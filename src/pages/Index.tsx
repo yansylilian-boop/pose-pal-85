@@ -18,9 +18,19 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [hasGenerated, setHasGenerated] = useState(false);
 
+  const femaleCount = peopleCount - maleCount;
+  const hasMixedGender = maleCount > 0 && femaleCount > 0;
+
   const handlePeopleChange = (count: number) => {
     setPeopleCount(count);
-    setMaleCount(Math.min(maleCount, count));
+    const newMale = Math.min(maleCount, count);
+    setMaleCount(newMale);
+    setCoupleCount(Math.min(coupleCount, Math.min(newMale, count - newMale)));
+  };
+
+  const handleMaleChange = (val: number) => {
+    setMaleCount(val);
+    setCoupleCount(Math.min(coupleCount, Math.min(val, peopleCount - val)));
   };
 
   const generatePose = async () => {
