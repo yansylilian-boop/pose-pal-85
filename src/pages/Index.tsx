@@ -41,9 +41,9 @@ const Index = () => {
     const maxRetries = 2;
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
       try {
-        const femaleCount = peopleCount - maleCount;
+        const fc = peopleCount - maleCount;
         const { data, error } = await supabase.functions.invoke("generate-pose", {
-          body: { peopleCount, maleCount, femaleCount, stylePrompt: styleText },
+          body: { peopleCount, maleCount, femaleCount: fc, coupleCount, stylePrompt: styleText },
         });
 
         if (error) {
