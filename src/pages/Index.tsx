@@ -28,9 +28,8 @@ const Index = () => {
 
     try {
       const femaleCount = peopleCount - maleCount;
-      const style = POSE_STYLES.find((s) => s.id === styleId);
       const { data, error } = await supabase.functions.invoke("generate-pose", {
-        body: { peopleCount, maleCount, femaleCount, stylePrompt: style?.prompt || "" },
+        body: { peopleCount, maleCount, femaleCount, stylePrompt: styleText },
       });
 
       if (error) throw error;
