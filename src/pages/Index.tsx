@@ -119,8 +119,16 @@ const Index = () => {
           <GenderSelector
             total={peopleCount}
             maleCount={maleCount}
-            onChange={setMaleCount}
+            onChange={handleMaleChange}
           />
+          {hasMixedGender && (
+            <CoupleSelector
+              maleCount={maleCount}
+              femaleCount={femaleCount}
+              coupleCount={coupleCount}
+              onChange={setCoupleCount}
+            />
+          )}
           <StyleInput value={styleText} onChange={setStyleText} />
           <Button
             onClick={generatePose}
