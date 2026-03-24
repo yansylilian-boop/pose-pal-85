@@ -26,27 +26,66 @@ const Index = () => {
     setImageUrl(null);
     setDescription("");
 
-    try {
-      const femaleCount = peopleCount - maleCount;
-      const { data, error } = await supabase.functions.invoke("generate-pose", {
-        body: { peopleCount, maleCount, femaleCount, stylePrompt: styleText },
-      });
+    const maxRetries = 2;
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      try {
+        const femaleCount = peopleCount - maleCount;
+        const { data, error } = await supabase.functions.invoke("generate-pose", {
+          body: { peopleCount, maleCount, femaleCount, stylePrompt: styleText },
+        });
 
-      if (error) throw error;
+        if (error) {
+          // Check for specific HTTP errors from the edge function
+          const status = (error as any)?.status || (error as any)?.context?.status;
+          if (status === 429) {
+            toast.error("请求太频繁，请稍等几秒再试");
+            break;
+          }
+          if (status === 402) {
+            toast.error("生成额度已用完");
+            break;
+          }
+          throw error;
+        }
 
-      if (data?.imageUrl) {
-        setImageUrl(data.imageUrl);
-        setDescription(data.description || "");
-        setHasGenerated(true);
-      } else {
-        throw new Error("未获取到图片");
+        if (data?.error) {
+          if (data.error.includes("频繁")) {
+            toast.error("请求太频繁，请稍等几秒再试");
+            break;
+          }
+          if (data.error.includes("额度")) {
+            toast.error("生成额度已用完");
+            break;
+          }
+          throw new Error(data.error);
+        }
+
+        if (data?.imageUrl) {
+          setImageUrl(data.imageUrl);
+          setDescription(data.description || "");
+          setHasGenerated(true);
+          break;
+        } else {
+          throw new Error("未获取到图片");
+        }
+      } catch (err: any) {
+        console.error(`Generate pose error (attempt ${attempt + 1}):`, err);
+        if (attempt < maxRetries) {
+          // Wait before retrying (1s, then 2s)
+          await new Promise(r => setTimeout(r, (attempt + 1) * 1000));
+          continue;
+        }
+        const msg = err?.message || "";
+        if (msg.includes("Failed to fetch") || msg.includes("NetworkError") || msg.includes("network")) {
+          toast.error("网络连接失败，请检查网络后重试");
+        } else if (msg.includes("timeout") || msg.includes("Timeout")) {
+          toast.error("生成超时，请稍后再试");
+        } else {
+          toast.error("生成失败，请重试");
+        }
       }
-    } catch (err: any) {
-      console.error("Generate pose error:", err);
-      toast.error("生成失败，请重试");
-    } finally {
-      setIsLoading(false);
     }
+    setIsLoading(false);
   };
 
   return (
