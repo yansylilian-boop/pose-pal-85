@@ -10,7 +10,7 @@ import { toast } from "sonner";
 const Index = () => {
   const [peopleCount, setPeopleCount] = useState(2);
   const [maleCount, setMaleCount] = useState(1);
-  const [styleId, setStyleId] = useState("funny");
+  const [styleText, setStyleText] = useState("");
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [description, setDescription] = useState("");
   const [isLoading, setIsLoading] = useState(false);
