@@ -21,10 +21,15 @@ serve(async (req) => {
     if (femaleCount > 0) genderDesc.push(`${femaleCount} female(s)`);
 
     const styleDesc = stylePrompt ? `The mood/style should be: ${stylePrompt}.` : "";
+    const hasMixedGender = maleCount > 0 && femaleCount > 0;
+    const boundaryRule = hasMixedGender
+      ? `IMPORTANT: Since there are both males and females, keep all poses friendly and casual. NO intimate, romantic, or physically close contact between different genders (no hugging, leaning on each other, holding hands, piggyback rides, or lifting). Keep a comfortable distance between males and females. Also avoid any difficult or acrobatic poses.`
+      : "";
 
     const prompt = `Generate a cute comic/manga style illustration showing a group photo pose for ${peopleCount} people (${genderDesc.join(" and ")}). 
 Show them in a fun, creative group pose suitable for taking a photo together. 
 ${styleDesc}
+${boundaryRule}
 The style should be clean line art with soft pastel colors, like a Japanese manga or webtoon illustration.
 Show full body poses with clear positioning. 
 Make each person distinct with different hairstyles and outfits.
