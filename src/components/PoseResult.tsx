@@ -1,3 +1,7 @@
+import { Button } from "@/components/ui/button";
+import { Download } from "lucide-react";
+import { toast } from "sonner";
+
 interface PoseResultProps {
   imageUrl: string | null;
   isLoading: boolean;
@@ -5,6 +9,25 @@ interface PoseResultProps {
 }
 
 const PoseResult = ({ imageUrl, isLoading, description }: PoseResultProps) => {
+  const handleDownload = async () => {
+    if (!imageUrl) return;
+    try {
+      const res = await fetch(imageUrl);
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `pose-${Date.now()}.png`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      toast.success("已保存到相册/下载文件夹");
+    } catch {
+      toast.error("下载失败，请长按图片手动保存");
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center py-16 space-y-4">
@@ -44,6 +67,13 @@ const PoseResult = ({ imageUrl, isLoading, description }: PoseResultProps) => {
           {description}
         </p>
       )}
+      <Button
+        onClick={handleDownload}
+        className="w-full h-12 rounded-2xl font-display font-bold text-base bg-secondary text-secondary-foreground hover:bg-secondary/80 transition-all hover:scale-[1.02] active:scale-[0.98]"
+      >
+        <Download className="w-5 h-5 mr-2" />
+        保存图片
+      </Button>
     </div>
   );
 };
